@@ -3,6 +3,8 @@ package edu.shepherd.bcrutc01.maze.structure;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.SimpleDirectedGraph;
+import org.jgrapht.graph.SimpleGraph;
 
 import java.util.Random;
 
@@ -33,7 +35,7 @@ public class Maze {
     public Maze(int length, int height) {
         this.length = length;
         this.height = height;
-        graph = new DefaultDirectedGraph<>(DefaultEdge.class);
+        graph = new SimpleGraph<>(DefaultEdge.class);
         lookupMatrix = new Cell[length][height];
         this.random = new Random();
 
@@ -153,6 +155,10 @@ public class Maze {
      */
     public int getHeight() {
         return height;
+    }
+
+    public Graph<Cell, DefaultEdge> getGraph() {
+        return graph;
     }
 
 }

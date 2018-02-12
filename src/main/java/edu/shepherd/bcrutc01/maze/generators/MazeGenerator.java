@@ -30,56 +30,36 @@ public class MazeGenerator {
      * Generate the maze
      */
     public void generate() {
+        // Visit 1 cell to give the walk a place to hit
+        Cell originalCell = maze.getRandomUnvisitedCell();
+        maze.visitCell(originalCell);
+        System.out.println("Original Cell; " + originalCell);
+
+        // Run until there are no vertices left to visit
         while(maze.getNumberOfVertices() < maze.getMaximumVertices()) {
-            // Get starting cell
-            Cell cell = maze.getRandomUnvisitedCell();
+            Cell startingCell = maze.getRandomUnvisitedCell();
+            System.out.println("Starting cell: " + startingCell);
+            Cell nextCell = startingCell;
 
-            // Get Cell to start walking from
-            Cell originalWalkingCell = maze.getRandomUnvisitedCell();
-            Cell walkingCell = originalWalkingCell;
+            // Walk until we hit a visited cell
+            do {
+                nextCell = walk(nextCell);
+            } while(!maze.hasBeenVisited(nextCell));
+            maze.visitCell(startingCell);
 
-            // Make sure we aren't trying to walk from a cell to itself to start with
-            // This will only happen if getRandomUnvisitedCell() returns the same cell twice in a row
-            if(cell.equals(walkingCell)) {
-
-                // If there is only one cell left to generate with, we randomly assign a connection to neighbour cell
-                if(maze.getMaximumVertices() - maze.getNumberOfVertices() == 1) {
-                    WalkDirection direction;
-                    Cell relative;
-
-                    do {
-                        direction = WalkDirection.of(maze.getRNG().nextInt(4));
-                        relative = getRelativeCell(cell, direction);
-                    } while(relative == null);
-
-                    maze.visitCell(cell);
-                    maze.addConnection(cell, relative);
-                    return;
-                }
-
-
-                while(cell.equals(walkingCell)) {
-                    walkingCell = maze.getRandomUnvisitedCell();
-                }
-            }
-
-            // Preform random walk until you reach the starting cell
-            while(!cell.equals(walkingCell)) {
-               //System.out.print("Walking from: " + walkingCell);
-               walkingCell = walk(walkingCell);
-               //System.out.println("to: " + walkingCell);
-            }
-
-            maze.visitCell(originalWalkingCell);
-
-            // Populate maze with walk
-            while(!originalWalkingCell.equals(cell)) {
-                Cell relative = getRelativeCell(originalWalkingCell, originalWalkingCell.getPreviousDirectionWalked());
+            // Register walks in the Maze
+            do  {
+                WalkDirection direction = startingCell.getPreviousDirectionWalked();
+                Cell relative = getRelativeCell(startingCell, direction);
                 maze.visitCell(relative);
-                maze.addConnection(originalWalkingCell, relative);
-                originalWalkingCell =  relative;
-            }
+                maze.addConnection(startingCell, relative);
+                System.out.print("Walking from " + startingCell);
+                startingCell = relative;
+                System.out.println(" to " + startingCell);
+            } while(!startingCell.equals(nextCell));
         }
+
+        System.out.println("Finished generating");
     }
 
     /**
@@ -97,7 +77,7 @@ public class MazeGenerator {
         } while(relative == null);
 
         cell.setPreviousDirectionWalked(direction);
-
+        logDirectionWalked(direction);
         return relative;
     }
 
@@ -138,5 +118,48 @@ public class MazeGenerator {
         }
 
         return relative;
+    }
+
+    /**
+     * Log a direction walked to the counter. Used for testing only
+     * @param direction direction to log
+     */
+    private void logDirectionWalked(WalkDirection direction) {
+        switch(direction) {
+            case DOWN:
+            case UP:
+                verticalCount++;
+                break;
+            case LEFT:
+            case RIGHT:
+                horizontalCount++;
+                break;
+        }
+
+        totalCount++;
+    }
+
+    /**
+     * Gets the logged count for times a vertical direction was walked
+     * @return the count
+     */
+    public double getVerticalCount() {
+        return verticalCount;
+    }
+
+    /**
+     * Gets the logged count for times a horizontal direction was walked
+     * @return the count
+     */
+    public double getHorizontalCount() {
+        return horizontalCount;
+    }
+
+    /**
+     * Gets the logged count for the total number of walks
+     * @return the count
+     */
+    public double getTotalCount() {
+        return totalCount;
     }
 }

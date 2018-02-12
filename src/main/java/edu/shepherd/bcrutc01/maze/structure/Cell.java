@@ -56,6 +56,7 @@ public class Cell {
 
     @Override
     public boolean equals(Object o) {
+        if(o == null) return false;
         if(!(o instanceof Cell)) return false;
         Cell other = (Cell) o;
         return lengthPosition == other.lengthPosition && heightPosition == other.heightPosition;

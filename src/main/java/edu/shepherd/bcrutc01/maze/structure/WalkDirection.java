@@ -4,25 +4,19 @@ public enum WalkDirection {
     /**
      * Up = y - 1
      */
-    UP(0),
+    UP(),
     /**
      * Down = y + 1
      */
-    DOWN(1),
+    DOWN(),
     /**
      * Left = x - 1
      */
-    LEFT(2),
+    LEFT(),
     /**
      * Right = x + 1
      */
-    RIGHT(3);
-
-    private int value;
-
-    WalkDirection(int value) {
-        this.value = value;
-    }
+    RIGHT();
 
     public static WalkDirection of(int value) {
         switch(value) {
