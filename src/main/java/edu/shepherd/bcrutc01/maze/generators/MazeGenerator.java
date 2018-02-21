@@ -33,12 +33,10 @@ public class MazeGenerator {
         // Visit 1 cell to give the walk a place to hit
         Cell originalCell = maze.getRandomUnvisitedCell();
         maze.visitCell(originalCell);
-        System.out.println("Original Cell; " + originalCell);
 
         // Run until there are no vertices left to visit
         while(maze.getNumberOfVertices() < maze.getMaximumVertices()) {
             Cell startingCell = maze.getRandomUnvisitedCell();
-            System.out.println("Starting cell: " + startingCell);
             Cell nextCell = startingCell;
 
             // Walk until we hit a visited cell
@@ -53,13 +51,9 @@ public class MazeGenerator {
                 Cell relative = getRelativeCell(startingCell, direction);
                 maze.visitCell(relative);
                 maze.addConnection(startingCell, relative);
-                System.out.print("Walking from " + startingCell);
                 startingCell = relative;
-                System.out.println(" to " + startingCell);
             } while(!startingCell.equals(nextCell));
         }
-
-        System.out.println("Finished generating");
     }
 
     /**

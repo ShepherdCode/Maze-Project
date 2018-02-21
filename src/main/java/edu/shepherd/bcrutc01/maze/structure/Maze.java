@@ -1,6 +1,11 @@
 package edu.shepherd.bcrutc01.maze.structure;
 
+import edu.shepherd.bcrutc01.maze.output.GraphUtils;
+import edu.shepherd.bcrutc01.maze.output.OutputData;
 import org.jgrapht.Graph;
+import org.jgrapht.GraphPath;
+import org.jgrapht.alg.interfaces.AStarAdmissibleHeuristic;
+import org.jgrapht.alg.shortestpath.AStarShortestPath;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleDirectedGraph;
@@ -18,6 +23,17 @@ import java.util.Random;
  * @version 1.0
  */
 public class Maze {
+
+    private static AStarAdmissibleHeuristic<Cell> A_STAR_HEURISTIC = new AStarAdmissibleHeuristic<Cell>() {
+        @Override
+        public double getCostEstimate(Cell cell, Cell v1) {
+            return Math.sqrt(getDistanceSquared(cell.getLengthPosition(), v1.getLengthPosition()) + getDistanceSquared(cell.getHeightPosition(), v1.getHeightPosition()));
+        }
+
+        public double getDistanceSquared(int x1, int x2) {
+            return Math.pow(x1 - x2, 2);
+        }
+    };
 
     private Graph<Cell, DefaultEdge> graph;
     // Provides the ability to look up a Cell by position without having to search through every vertex in the graph
@@ -46,6 +62,24 @@ public class Maze {
                 lookupMatrix[l][h] = cell;
             }
         }
+    }
+
+    /**
+     * Find the shortest path using A Star and report the timings it took
+     *
+     * @param start the start node
+     * @param end the end node
+     * @return the timings it took to find the shortest path
+     */
+    public OutputData getAStarShortestPathData(Cell start, Cell end) {
+        AStarShortestPath<Cell, DefaultEdge> aStarShortestPath = new AStarShortestPath<>(graph, A_STAR_HEURISTIC);
+        long curr = System.currentTimeMillis();
+        GraphPath<Cell, DefaultEdge> path = aStarShortestPath.getPath(start, end);
+        long elapsed = System.currentTimeMillis() - curr;
+
+        int complexity = GraphUtils.calculateComplexity2(graph, path);
+
+        return new OutputData(complexity, elapsed, 0.5);
     }
 
     /**
@@ -157,8 +191,11 @@ public class Maze {
         return height;
     }
 
+    /**
+     * Get the graph of this maze
+     * @return the graph of this maze
+     */
     public Graph<Cell, DefaultEdge> getGraph() {
         return graph;
     }
-
 }

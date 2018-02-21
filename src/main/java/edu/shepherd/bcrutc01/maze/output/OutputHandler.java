@@ -21,12 +21,18 @@ public class OutputHandler {
     private Workbook outputSpreadsheet;
     private Sheet outputSheet;
     private String sheetName;
-    private int rowCounter = 0;
+    private int rowCounter = 1;
 
     private OutputHandler() {
         outputSpreadsheet = new HSSFWorkbook();
         sheetName = "output-" + System.currentTimeMillis();
         outputSheet = outputSpreadsheet.createSheet(sheetName);
+        Row row = outputSheet.createRow(0);
+        row.createCell(0).setCellValue("Type");
+        row.createCell(1).setCellValue("Bias");
+        row.createCell(2).setCellValue("Complexity");
+        row.createCell(3).setCellValue("Elapsed Time");
+
     }
 
     public static OutputHandler getInstance() {
@@ -41,17 +47,15 @@ public class OutputHandler {
      * Log a data entry in the spreadsheet with the following values
      *
      * @param type the algorithm this data point is for
-     * @param biasValue the bias value tested at
-     * @param distance the distance value of the start and end point
-     * @param time the time it took to complete
+     * @param data the data to output
      */
-    public void writeEntry(AlgorithmType type, double biasValue, double distance, long time) {
+    public void writeEntry(AlgorithmType type, OutputData data) {
         Row row = outputSheet.createRow(rowCounter);
 
         row.createCell(0).setCellValue(type.ordinal());
-        row.createCell(1).setCellValue(biasValue);
-        row.createCell(2).setCellValue(distance);
-        row.createCell(3).setCellValue(time);
+        row.createCell(1).setCellValue(data.getBiasValue());
+        row.createCell(2).setCellValue(data.getComplexity());
+        row.createCell(3).setCellValue(data.getElapsedTime());
         rowCounter++;
     }
 

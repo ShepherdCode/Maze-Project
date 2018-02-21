@@ -42,17 +42,17 @@ public class UnbiasedMazeTest {
      */
     @Test
     public void testCompleteness() {
-        //for(int i = 0; i < 100; i++) {
-        //    Maze testMaze = new Maze(8,8);
-        //    MazeGenerator testMazeGenerator = new MazeGenerator(testMaze);
-        //   testMazeGenerator.generate();
-        //    Graph<Cell, DefaultEdge> g = testMaze.getGraph();
+        for(int i = 0; i < 100; i++) {
+            Maze testMaze = new Maze(8,8);
+            MazeGenerator testMazeGenerator = new MazeGenerator(testMaze);
+            testMazeGenerator.generate();
+            Graph<Cell, DefaultEdge> g = testMaze.getGraph();
 
-        //    for(Cell cell : g.vertexSet()) {
-        //        System.out.println("Cell " + cell + " has " + g.inDegreeOf(cell) + " in and " + g.outDegreeOf(cell) + " out");
-        //        assertTrue(g.inDegreeOf(cell) > 0 || g.outDegreeOf(cell) > 0);
-        //    }
-        //}
+            for(Cell cell : g.vertexSet()) {
+                System.out.println("Cell " + cell + " has " + g.inDegreeOf(cell) + " in and " + g.outDegreeOf(cell) + " out");
+                assertTrue(g.inDegreeOf(cell) > 0 || g.outDegreeOf(cell) > 0);
+            }
+        }
     }
 
     /**
