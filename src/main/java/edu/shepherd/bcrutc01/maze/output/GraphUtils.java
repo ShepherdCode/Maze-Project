@@ -16,32 +16,6 @@ public class GraphUtils {
      */
     private GraphUtils() { }
 
-    public static int calculateComplexity2(Graph<Cell, DefaultEdge> graph, GraphPath<Cell, DefaultEdge> path) {
-        List<Cell> vertexList = path.getVertexList();
-        int complexity = 0;
-        for(Cell cell : vertexList) {
-            for(DefaultEdge edge : new ArrayList<>(graph.outgoingEdgesOf(cell))) {
-                if(vertexList.contains(graph.getEdgeTarget(edge))) {
-                    continue;
-                }
-
-                Cell source = graph.getEdgeSource(edge);
-                Cell target = graph.getEdgeTarget(edge);
-                System.out.println("Removing edge:" + edge);
-                graph.removeEdge(edge);
-
-                DepthFirstIterator<Cell, DefaultEdge> iterator = new DepthFirstIterator<>(graph, target);
-                while(iterator.hasNext()) {
-                    iterator.next();
-                    complexity++;
-                }
-
-                graph.addEdge(source, target);
-            }
-        }
-        return complexity;
-    }
-
     public static int calculateComplexity(Graph<Cell, DefaultEdge> graph, GraphPath<Cell, DefaultEdge> path) {
         List<Cell> vertexList = path.getVertexList();
         int complexity = 1;

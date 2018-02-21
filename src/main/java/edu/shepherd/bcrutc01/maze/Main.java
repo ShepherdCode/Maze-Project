@@ -21,13 +21,14 @@ public class Main {
 
     private static Random rand = new Random();
 
-    public static void main2(String[] args) {
+    public static void main(String[] args) {
         int counter = 1;
 
         while (counter < 2) {
-            Maze unbiasedMaze = new Maze(100, 100);
+            Maze unbiasedMaze = new Maze(300, 300);
             MazeGenerator generator = new MazeGenerator(unbiasedMaze);
             generator.generate();
+            OutputHandler handler = new OutputHandler();
 
             //visualizeGraph(unbiasedMaze.getGraph());
 
@@ -37,15 +38,14 @@ public class Main {
 
                 OutputData aStarData = unbiasedMaze.getAStarShortestPathData(start, end);
                 System.out.printf("Output data for path %d from %s to %s : %s%n", i, start, end, aStarData);
-                OutputHandler.getInstance().writeEntry(AlgorithmType.ASTAR, aStarData);
+                handler.writeEntry(AlgorithmType.ASTAR, aStarData);
             }
             counter++;
+            handler.writeToFile();
         }
-
-        OutputHandler.getInstance().writeToFile();
     }
 
-    public static void main(String[] args) {
+    public static void main2(String[] args) {
         Maze maze = new Maze(4, 4);
         Cell[] cells = {maze.lookupCell(0,0),
                 maze.lookupCell(0,1),

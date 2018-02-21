@@ -77,7 +77,7 @@ public class Maze {
         GraphPath<Cell, DefaultEdge> path = aStarShortestPath.getPath(start, end);
         long elapsed = System.currentTimeMillis() - curr;
 
-        int complexity = GraphUtils.calculateComplexity2(graph, path);
+        int complexity = GraphUtils.calculateComplexity(graph, path);
 
         return new OutputData(complexity, elapsed, 0.5);
     }

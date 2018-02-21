@@ -16,14 +16,12 @@ import java.io.IOException;
  */
 public class OutputHandler {
 
-    private static OutputHandler instance;
-
     private Workbook outputSpreadsheet;
     private Sheet outputSheet;
     private String sheetName;
     private int rowCounter = 1;
 
-    private OutputHandler() {
+    public OutputHandler() {
         outputSpreadsheet = new HSSFWorkbook();
         sheetName = "output-" + System.currentTimeMillis();
         outputSheet = outputSpreadsheet.createSheet(sheetName);
@@ -33,14 +31,6 @@ public class OutputHandler {
         row.createCell(2).setCellValue("Complexity");
         row.createCell(3).setCellValue("Elapsed Time");
 
-    }
-
-    public static OutputHandler getInstance() {
-        if (instance == null) {
-            instance = new OutputHandler();
-        }
-
-        return instance;
     }
 
     /**
