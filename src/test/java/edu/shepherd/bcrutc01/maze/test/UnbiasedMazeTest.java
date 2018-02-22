@@ -1,10 +1,12 @@
 package edu.shepherd.bcrutc01.maze.test;
 
 import edu.shepherd.bcrutc01.maze.generators.MazeGenerator;
+import edu.shepherd.bcrutc01.maze.output.GraphUtils;
 import edu.shepherd.bcrutc01.maze.structure.Cell;
 import edu.shepherd.bcrutc01.maze.structure.Maze;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.traverse.DepthFirstIterator;
 import org.junit.Test;
 
 import java.util.HashSet;
@@ -21,35 +23,18 @@ import static org.junit.Assert.assertTrue;
  */
 public class UnbiasedMazeTest {
 
-    private static Maze maze;
-    private static Set<Cell> reachableCells = new HashSet<>();
-    private static MazeGenerator generator;
-
-    public UnbiasedMazeTest() {
-        if(generator == null) {
-            maze = new Maze(3, 3);
-            generator = new MazeGenerator(maze);
-            generator.generate();
-            Graph<Cell, DefaultEdge> g = maze.getGraph();
-            for(Cell cell : g.vertexSet()) {
-                System.out.println("Cell " + cell + " has " + g.inDegreeOf(cell) + " in and " + g.outDegreeOf(cell) + " out");
-            }
-        }
-    }
-
     /**
      * Tests for completeness by checking if every cell has either an input edge or an output edge
      */
     @Test
     public void testCompleteness() {
-        for(int i = 0; i < 100; i++) {
-            Maze testMaze = new Maze(8,8);
+        for(int i = 0; i < 1000; i++) {
+            Maze testMaze = new Maze(100,100);
             MazeGenerator testMazeGenerator = new MazeGenerator(testMaze);
             testMazeGenerator.generate();
             Graph<Cell, DefaultEdge> g = testMaze.getGraph();
 
             for(Cell cell : g.vertexSet()) {
-                System.out.println("Cell " + cell + " has " + g.inDegreeOf(cell) + " in and " + g.outDegreeOf(cell) + " out");
                 assertTrue(g.inDegreeOf(cell) > 0 || g.outDegreeOf(cell) > 0);
             }
         }
@@ -58,36 +43,24 @@ public class UnbiasedMazeTest {
     /**
      * Tests for reachability by checking if the number of cells that can be reached from the origin is the same as the number of cells in this graph
      */
-    // TODO: Fix this test: Mazes are reachable, but this test still fails due to faulty logic
-    //@Test
+    @Test
     public void testReachability() {
-        Graph<Cell, DefaultEdge> g = maze.getGraph();
+        for(int i = 0; i < 1000; i++) {
+            Maze testMaze = new Maze(100,100);
+            MazeGenerator testMazeGenerator = new MazeGenerator(testMaze);
+            testMazeGenerator.generate();
+            Graph<Cell, DefaultEdge> graph = testMaze.getGraph();
+            Cell startNode = testMaze.lookupCell(0, 0);
 
-        Cell origin = maze.lookupCell(0, 0);
-        findReachableCells(g, origin, null);
-        assertTrue(reachableCells.size() == g.vertexSet().size());
-    }
+            DepthFirstIterator<Cell, DefaultEdge> iterator = new DepthFirstIterator<>(graph, startNode);
 
-    /**
-     * Helper method for finding every reachable cell from a given cell
-     * @param g the Graph to check
-     * @param origin the given cell
-     */
-    private void findReachableCells(Graph<Cell, DefaultEdge> g, Cell origin, Cell previous) {
-        System.out.println("Testing " + origin);
-        for(DefaultEdge edge : g.outgoingEdgesOf(origin)) {
-            Cell target = g.getEdgeTarget(edge).equals(origin) ? g.getEdgeSource(edge) : g.getEdgeTarget(edge) ;
-            if(target.equals(previous)) {
-                continue;
+            int count = 0;
+            while(iterator.hasNext()) {
+                count++;
+                iterator.next();
             }
 
-            if(g.outDegreeOf(target) < 2) {
-                reachableCells.add(target);
-                continue;
-            } else {
-                findReachableCells(g, target, origin);
-            }
-            reachableCells.add(target);
+            assertTrue(count == testMaze.getLength() * testMaze.getHeight());
         }
     }
     /**
@@ -95,11 +68,65 @@ public class UnbiasedMazeTest {
      */
     @Test
     public void testBiasValues() {
-        double horizontalBiasPercent = generator.getHorizontalCount() / generator.getTotalCount();
-        double verticalBiasPercent = generator.getVerticalCount() / generator.getTotalCount();
-        System.out.println("vbias: " + verticalBiasPercent);
-        System.out.println("hbias: " + horizontalBiasPercent);
-        assertTrue(Math.abs(horizontalBiasPercent - .5) < .15 && Math.abs(verticalBiasPercent - .5) < .15);
+        double biasTotal = 0;
+        double total = 0;
+
+        for(int i = 0; i < 1000; i++) {
+            Maze testMaze = new Maze(100,100);
+            MazeGenerator testMazeGenerator = new MazeGenerator(testMaze);
+            testMazeGenerator.generate();
+
+            biasTotal += testMazeGenerator.getHorizontalCount() / testMazeGenerator.getTotalCount();
+            total++;
+        }
+
+        assertTrue(Math.abs((biasTotal / total) - .50) < 5);
+    }
+
+    /**
+     * Test basic complexity structures using a preset maze.
+     *
+     * The preset maze is as follows:
+     *
+     *    0   1   2
+     * 0  x - x   x
+     *        |   |
+     * 1  x - x - x
+     *        |   |
+     * 2  x - x   x
+     *
+     */
+    @Test
+    public void testComplexityValues() {
+        Maze maze = new Maze(3, 3);
+        Cell[] cells = {maze.lookupCell(0, 0),
+                maze.lookupCell(0, 1),
+                maze.lookupCell(1, 0),
+                maze.lookupCell(0, 2),
+                maze.lookupCell(1, 1),
+                maze.lookupCell(1,2),
+                maze.lookupCell(2, 1),
+                maze.lookupCell(2, 0),
+                maze.lookupCell(2, 2)};
+
+        for(Cell c : cells) {
+            maze.visitCell(c);
+        }
+
+        maze.addConnection(cells[0], cells[2]);
+        maze.addConnection(cells[2], cells[4]);
+        maze.addConnection(cells[4], cells[1]);
+        maze.addConnection(cells[4], cells[6]);
+        maze.addConnection(cells[4], cells[5]);
+        maze.addConnection(cells[5], cells[3]);
+        maze.addConnection(cells[6], cells[7]);
+        maze.addConnection(cells[6], cells[8]);
+
+
+        assertTrue(maze.getAStarShortestPathData(cells[0], cells[2], 0.50).getComplexity() == 0);
+        assertTrue(maze.getAStarShortestPathData(cells[0], cells[3], 0.50).getComplexity() == 4);
+        assertTrue(maze.getAStarShortestPathData(cells[0], cells[4], 0.50).getComplexity() == 0);
+        assertTrue(maze.getAStarShortestPathData(cells[0], cells[6], 0.50).getComplexity() == 3);
     }
 
 

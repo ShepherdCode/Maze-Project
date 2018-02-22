@@ -1,11 +1,13 @@
 package edu.shepherd.bcrutc01.maze.structure;
 
+import java.io.Serializable;
+
 /**
  * A Cell in the Maze
  * @author Brian Crutchley
  * @version 1.0
  */
-public class Cell {
+public class Cell implements Serializable {
     private int lengthPosition;
     private int heightPosition;
 

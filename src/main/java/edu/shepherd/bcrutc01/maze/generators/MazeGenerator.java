@@ -6,7 +6,7 @@ import edu.shepherd.bcrutc01.maze.structure.WalkDirection;
 
 
 /**
- * Implements a Maze generator using Wilson's algorithm
+ * Implements a Maze generator using Wilson's algorithm with optional bias
  *
  * @author Brian Crutchley
  * @version 1.0
@@ -17,13 +17,20 @@ public class MazeGenerator {
     private double verticalCount;
     private double horizontalCount;
     private double totalCount;
+    private double biasFactor;
+
+    public MazeGenerator(Maze maze) {
+        this(maze, 0.50);
+    }
 
     /**
      * Construct a Maze generator for the given maze
      * @param maze maze to generate
+     * @param biasFactor the amount of bias (from .50 to 1.0, where .50 is unbiased and 1.0 is fully vertical biased)
      */
-    public MazeGenerator(Maze maze) {
+    public MazeGenerator(Maze maze, double biasFactor) {
         this.maze = maze;
+        this.biasFactor = biasFactor;
     }
 
     /**
@@ -80,7 +87,11 @@ public class MazeGenerator {
      * @return a random direction to walk in
      */
     public WalkDirection getRandomWalkDirection() {
-        return WalkDirection.of(maze.getRNG().nextInt(4));
+        if(maze.getRNG().nextDouble() < biasFactor) {
+            return WalkDirection.of(maze.getRNG().nextInt(2) + 2);
+        } else {
+            return WalkDirection.of(maze.getRNG().nextInt(2));
+        }
     }
 
     /**

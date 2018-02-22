@@ -17,36 +17,44 @@ import java.io.IOException;
 public class OutputHandler {
 
     private Workbook outputSpreadsheet;
-    private Sheet outputSheet;
+    private Sheet[] outputSheets;
     private String sheetName;
-    private int rowCounter = 1;
+    private int[] rowCounters;
 
     public OutputHandler() {
         outputSpreadsheet = new HSSFWorkbook();
         sheetName = "output-" + System.currentTimeMillis();
-        outputSheet = outputSpreadsheet.createSheet(sheetName);
-        Row row = outputSheet.createRow(0);
-        row.createCell(0).setCellValue("Type");
-        row.createCell(1).setCellValue("Bias");
-        row.createCell(2).setCellValue("Complexity");
-        row.createCell(3).setCellValue("Elapsed Time");
+        outputSheets = new Sheet[3];
+        rowCounters = new int[3];
+        outputSheets[0] = outputSpreadsheet.createSheet(sheetName + "-dijkstras");
+        outputSheets[1] = outputSpreadsheet.createSheet(sheetName + "-astar");
+        outputSheets[2] = outputSpreadsheet.createSheet(sheetName + "-bellmanford");
+
+
+        for(int i = 0; i < outputSheets.length; i++) {
+            Row row = outputSheets[i].createRow(0);
+
+            row.createCell(0).setCellValue("Bias");
+            row.createCell(1).setCellValue("Complexity");
+            row.createCell(2).setCellValue("Elapsed Time");
+
+            rowCounters[i] = 1;
+        }
 
     }
 
     /**
      * Log a data entry in the spreadsheet with the following values
      *
-     * @param type the algorithm this data point is for
      * @param data the data to output
      */
     public void writeEntry(AlgorithmType type, OutputData data) {
-        Row row = outputSheet.createRow(rowCounter);
+        Row row = outputSheets[type.ordinal()].createRow(rowCounters[type.ordinal()]);
 
-        row.createCell(0).setCellValue(type.ordinal());
-        row.createCell(1).setCellValue(data.getBiasValue());
-        row.createCell(2).setCellValue(data.getComplexity());
-        row.createCell(3).setCellValue(data.getElapsedTime());
-        rowCounter++;
+        row.createCell(0).setCellValue(data.getBiasValue());
+        row.createCell(1).setCellValue(data.getComplexity());
+        row.createCell(2).setCellValue(data.getElapsedTime());
+        rowCounters[type.ordinal()]++;
     }
 
     /**

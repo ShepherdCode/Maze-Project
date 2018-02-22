@@ -1,20 +1,13 @@
 package edu.shepherd.bcrutc01.maze;
 
 
-import com.mxgraph.layout.mxFastOrganicLayout;
-import com.mxgraph.swing.mxGraphComponent;
-import com.mxgraph.view.mxGraph;
 import edu.shepherd.bcrutc01.maze.generators.MazeGenerator;
 import edu.shepherd.bcrutc01.maze.output.AlgorithmType;
 import edu.shepherd.bcrutc01.maze.output.OutputData;
 import edu.shepherd.bcrutc01.maze.output.OutputHandler;
 import edu.shepherd.bcrutc01.maze.structure.Cell;
 import edu.shepherd.bcrutc01.maze.structure.Maze;
-import org.jgrapht.Graph;
-import org.jgrapht.ext.JGraphXAdapter;
-import org.jgrapht.graph.DefaultEdge;
 
-import javax.swing.*;
 import java.util.Random;
 
 public class Main {
@@ -22,58 +15,41 @@ public class Main {
     private static Random rand = new Random();
 
     public static void main(String[] args) {
-        int counter = 1;
+        if(args.length != 5) {
+            System.out.println("Error: Incorrect arguments specified. Please read documentation for details.");
+            System.exit(0);
+        }
 
-        while (counter < 2) {
-            Maze unbiasedMaze = new Maze(300, 300);
-            MazeGenerator generator = new MazeGenerator(unbiasedMaze);
+        int length = Integer.valueOf(args[0]);
+        int height = Integer.valueOf(args[1]);
+        double bias = Double.valueOf(args[2]);
+        int runs = Integer.valueOf(args[3]);
+        int points = Integer.valueOf(args[4]);
+
+        OutputHandler handler = new OutputHandler();
+
+        for(int i = 0; i < runs; i++) {
+            System.out.println("Starting Maze Tests for Maze: " + i);
+            Maze maze = new Maze(length, height);
+            MazeGenerator generator = new MazeGenerator(maze, bias);
             generator.generate();
-            OutputHandler handler = new OutputHandler();
 
-            //visualizeGraph(unbiasedMaze.getGraph());
+            for(int j = 0; j < points; j++) {
+                System.out.println("Testing point: " + j);
+                Cell start = getRandomCell(maze);
+                Cell end = getRandomCell(maze);
 
-            for (int i = 0; i < 1000; i++) {
-                Cell start = getRandomCell(unbiasedMaze);
-                Cell end = getRandomCell(unbiasedMaze);
+                OutputData dijkstraOutputData = maze.getDijstraShortestPathData(start, end, bias);
+                OutputData aStarOutputData = maze.getAStarShortestPathData(start, end, bias);
+                OutputData bellmanFordOutputData = maze.getBellmanFordShortestPathData(start, end, bias);
 
-                OutputData aStarData = unbiasedMaze.getAStarShortestPathData(start, end);
-                System.out.printf("Output data for path %d from %s to %s : %s%n", i, start, end, aStarData);
-                handler.writeEntry(AlgorithmType.ASTAR, aStarData);
+                handler.writeEntry(AlgorithmType.DIJKSTRAS, dijkstraOutputData);
+                handler.writeEntry(AlgorithmType.ASTAR, aStarOutputData);
+                handler.writeEntry(AlgorithmType.BELLMAN_FORD, bellmanFordOutputData);
             }
-            counter++;
-            handler.writeToFile();
-        }
-    }
-
-    public static void main2(String[] args) {
-        Maze maze = new Maze(4, 4);
-        Cell[] cells = {maze.lookupCell(0,0),
-                maze.lookupCell(0,1),
-                maze.lookupCell(0,2),
-                maze.lookupCell(0,3),
-                maze.lookupCell(1,1),
-                maze.lookupCell(2,1),
-                maze.lookupCell(3,1),
-                maze.lookupCell(3, 2),
-                maze.lookupCell(3, 0)};
-
-        for(Cell c : cells) {
-            maze.visitCell(c);
         }
 
-
-        maze.addConnection(cells[0], cells[1]);
-        maze.addConnection(cells[1], cells[2]);
-        maze.addConnection(cells[2], cells[3]);
-        maze.addConnection(cells[1], cells[4]);
-        maze.addConnection(cells[4], cells[5]);
-        maze.addConnection(cells[5], cells[6]);
-        maze.addConnection(cells[6], cells[7]);
-        maze.addConnection(cells[6], cells[8]);
-
-        System.out.println(maze.getGraph().edgeSet());
-
-        System.out.println(maze.getAStarShortestPathData(cells[0], cells[3]));
+        handler.writeToFile();
     }
 
 
@@ -85,36 +61,6 @@ public class Main {
 
 
         return maze.lookupCell(len, height);
-    }
-
-    public static void visualizeGraph(Graph<Cell, DefaultEdge> graph) {
-        Thread thread = new Thread() {
-            @Override
-            public void run() {
-                mxGraph graphx = new JGraphXAdapter<>(graph);
-                System.out.println(1);
-                JFrame frame = new JFrame("Graph");
-                frame.setSize(1000, 1000);
-                frame.getContentPane().add(new mxGraphComponent(graphx));
-                System.out.println(2);
-
-                // define layout
-                mxFastOrganicLayout layout = new mxFastOrganicLayout(graphx);
-                System.out.println(3);
-
-                // set some properties
-                layout.setForceConstant(40); // the higher, the more separated
-                layout.setDisableEdgeStyle( false); // true transforms the edges and makes them direct lines
-
-                // layout graph
-                layout.execute(graphx.getDefaultParent());
-                frame.pack();
-                frame.setVisible(true);
-                System.out.println("Visible now");
-
-            }
-        };
-        thread.start();
     }
 
 

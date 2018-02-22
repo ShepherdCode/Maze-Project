@@ -6,6 +6,8 @@ import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.interfaces.AStarAdmissibleHeuristic;
 import org.jgrapht.alg.shortestpath.AStarShortestPath;
+import org.jgrapht.alg.shortestpath.BellmanFordShortestPath;
+import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleDirectedGraph;
@@ -71,7 +73,7 @@ public class Maze {
      * @param end the end node
      * @return the timings it took to find the shortest path
      */
-    public OutputData getAStarShortestPathData(Cell start, Cell end) {
+    public OutputData getAStarShortestPathData(Cell start, Cell end, double biasValue) {
         AStarShortestPath<Cell, DefaultEdge> aStarShortestPath = new AStarShortestPath<>(graph, A_STAR_HEURISTIC);
         long curr = System.currentTimeMillis();
         GraphPath<Cell, DefaultEdge> path = aStarShortestPath.getPath(start, end);
@@ -79,7 +81,43 @@ public class Maze {
 
         int complexity = GraphUtils.calculateComplexity(graph, path);
 
-        return new OutputData(complexity, elapsed, 0.5);
+        return new OutputData(complexity, elapsed, biasValue);
+    }
+
+    /**
+     * Find the shortest path using the Bellman-Ford algorithm and report the timings it took
+     *
+     * @param start the start node
+     * @param end the end node
+     * @return the timings it took to find the shortest path
+     */
+    public OutputData getBellmanFordShortestPathData(Cell start, Cell end, double biasValue) {
+        BellmanFordShortestPath<Cell, DefaultEdge> bellmanFordShortestPath = new BellmanFordShortestPath<Cell, DefaultEdge>(graph);
+        long curr = System.currentTimeMillis();
+        GraphPath<Cell, DefaultEdge> path = bellmanFordShortestPath.getPath(start, end);
+        long elapsed = System.currentTimeMillis() - curr;
+
+        int complexity = GraphUtils.calculateComplexity(graph, path);
+
+        return new OutputData(complexity, elapsed, biasValue);
+    }
+
+    /**
+     * Find the shortest path using Dijkstra's algorithm and report the timings it took
+     *
+     * @param start the start node
+     * @param end the end node
+     * @return the timings it took to find the shortest path
+     */
+    public OutputData getDijstraShortestPathData(Cell start, Cell end, double biasValue) {
+        DijkstraShortestPath<Cell, DefaultEdge> dijkstraShortestPath = new DijkstraShortestPath<>(graph);
+        long curr = System.currentTimeMillis();
+        GraphPath<Cell, DefaultEdge> path = dijkstraShortestPath.getPath(start, end);
+        long elapsed = System.currentTimeMillis() - curr;
+
+        int complexity = GraphUtils.calculateComplexity(graph, path);
+
+        return new OutputData(complexity, elapsed, biasValue);
     }
 
     /**

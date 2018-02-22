@@ -18,38 +18,90 @@ public class GraphUtils {
 
     public static int calculateComplexity(Graph<Cell, DefaultEdge> graph, GraphPath<Cell, DefaultEdge> path) {
         List<Cell> vertexList = path.getVertexList();
-        int complexity = 1;
+        int complexity = 0;
         for(Cell cell : vertexList) {
 
-            for(DefaultEdge edge : graph.outgoingEdgesOf(cell)) {
-                if(vertexList.contains(graph.getEdgeTarget(edge))) {
-                    continue;
-                }
-                complexity += countDepth(graph, edge, 0);
+            if(cell.equals(path.getStartVertex()) || cell.equals(path.getEndVertex())) {
+                continue;
             }
+
+            complexity += exploreCell(graph, path, cell, null);
         }
         return complexity;
     }
 
-    private static int countDepth(Graph<Cell, DefaultEdge> graph, DefaultEdge edge, int depth) {
-        Cell target = graph.getEdgeTarget(edge);
-        int actualDepth = depth;
+    private static int exploreCell(Graph<Cell, DefaultEdge> graph, GraphPath<Cell, DefaultEdge> path,  Cell cell, Cell previousCell) {
+        int complexity = 0;
 
-        for(DefaultEdge nextEdge : graph.outgoingEdgesOf(target)) {
-            if(graph.getEdgeTarget(nextEdge).equals(target)) {
-                continue;
+        if(isHubCell(graph, cell)) {
+            // This is a hub, we want to explore every connection of it
+
+
+            // If this is a hub that isn't on the path, increase complexity
+            if(!path.getVertexList().contains(cell)) {
+                complexity++;
             }
 
-            if(edge.equals(nextEdge)) {
-                continue;
+            // Explore all connected nodes that aren't on the path and that we haven't already explored
+            for(Cell c1 : getConnectedCells(graph, cell)) {
+                if(!c1.equals(previousCell) && !path.getVertexList().contains(c1)) {
+                    complexity += exploreCell(graph, path, c1, cell);
+                }
             }
 
-            actualDepth += countDepth(graph, nextEdge, depth) + 1;
+        } else if(isTransitionCell(graph, cell)) {
+
+            // If this is a hub that isn't on the path, increase complexity
+            if(!path.getVertexList().contains(cell)) {
+                complexity++;
+            }
+
+            // Explore all connected nodes that aren't on the path and that we haven't already explored
+            for(Cell c1 : getConnectedCells(graph, cell)) {
+                if(!c1.equals(previousCell) && !path.getVertexList().contains(c1)) {
+                    complexity += exploreCell(graph, path, c1, cell);
+                }
+            }
+        } else {
+            // This is an end point, add one
+            if(!path.getVertexList().contains(cell)) {
+                complexity++;
+            }
         }
 
-        return actualDepth;
+        return complexity;
     }
 
+    private static boolean isTransitionCell(Graph<Cell, DefaultEdge> graph, Cell cell) {
+        return graph.outDegreeOf(cell) == 2;
+    }
 
+    private static List<Cell> getConnectedCells(Graph<Cell, DefaultEdge> graph, Cell cell) {
+        List<Cell> connected = new ArrayList<>();
+
+        for(DefaultEdge edge : graph.outgoingEdgesOf(cell)) {
+            Cell source = graph.getEdgeSource(edge);
+            Cell target = graph.getEdgeTarget(edge);
+
+            if(!target.equals(cell)) {
+                if(!connected.contains(target)) {
+                    connected.add(target);
+                }
+            }
+
+            if(!source.equals(cell)) {
+                if(!connected.contains(source)) {
+                    connected.add(source);
+                }
+            }
+
+        }
+
+        return connected;
+    }
+
+    private static boolean isHubCell(Graph<Cell, DefaultEdge> graph, Cell cell) {
+        return graph.outDegreeOf(cell) > 2;
+    }
 
 }
