@@ -73,15 +73,16 @@ public class Maze {
      * @param end the end node
      * @return the timings it took to find the shortest path
      */
-    public OutputData getAStarShortestPathData(Cell start, Cell end, double biasValue) {
+    public OutputData getAStarShortestPathData(Cell start, Cell end) {
         AStarShortestPath<Cell, DefaultEdge> aStarShortestPath = new AStarShortestPath<>(graph, A_STAR_HEURISTIC);
-        long curr = System.currentTimeMillis();
+        long currMem = Runtime.getRuntime().freeMemory();
+        long curr = System.nanoTime();
         GraphPath<Cell, DefaultEdge> path = aStarShortestPath.getPath(start, end);
-        long elapsed = System.currentTimeMillis() - curr;
-
+        long elapsed = System.nanoTime() - curr;
+        long elapsedMem = currMem - Runtime.getRuntime().freeMemory();
         int complexity = GraphUtils.calculateComplexity(graph, path);
 
-        return new OutputData(complexity, elapsed, biasValue);
+        return new OutputData(complexity, elapsed, path.getLength(), elapsedMem, getLength());
     }
 
     /**
@@ -91,15 +92,16 @@ public class Maze {
      * @param end the end node
      * @return the timings it took to find the shortest path
      */
-    public OutputData getBellmanFordShortestPathData(Cell start, Cell end, double biasValue) {
+    public OutputData getBellmanFordShortestPathData(Cell start, Cell end) {
         BellmanFordShortestPath<Cell, DefaultEdge> bellmanFordShortestPath = new BellmanFordShortestPath<Cell, DefaultEdge>(graph);
-        long curr = System.currentTimeMillis();
+        long currMem = Runtime.getRuntime().freeMemory();
+        long curr = System.nanoTime();
         GraphPath<Cell, DefaultEdge> path = bellmanFordShortestPath.getPath(start, end);
-        long elapsed = System.currentTimeMillis() - curr;
-
+        long elapsed = System.nanoTime() - curr;
+        long elapsedMem = currMem - Runtime.getRuntime().freeMemory();
         int complexity = GraphUtils.calculateComplexity(graph, path);
 
-        return new OutputData(complexity, elapsed, biasValue);
+        return new OutputData(complexity, elapsed, path.getLength(), elapsedMem, getLength());
     }
 
     /**
@@ -109,15 +111,16 @@ public class Maze {
      * @param end the end node
      * @return the timings it took to find the shortest path
      */
-    public OutputData getDijstraShortestPathData(Cell start, Cell end, double biasValue) {
+    public OutputData getDijstraShortestPathData(Cell start, Cell end) {
         DijkstraShortestPath<Cell, DefaultEdge> dijkstraShortestPath = new DijkstraShortestPath<>(graph);
-        long curr = System.currentTimeMillis();
+        long currMem = Runtime.getRuntime().freeMemory();
+        long curr = System.nanoTime();
         GraphPath<Cell, DefaultEdge> path = dijkstraShortestPath.getPath(start, end);
-        long elapsed = System.currentTimeMillis() - curr;
-
+        long elapsed = System.nanoTime() - curr;
+        long elapsedMem = currMem - Runtime.getRuntime().freeMemory();
         int complexity = GraphUtils.calculateComplexity(graph, path);
 
-        return new OutputData(complexity, elapsed, biasValue);
+        return new OutputData(complexity, elapsed, path.getLength(), elapsedMem, getLength());
     }
 
     /**

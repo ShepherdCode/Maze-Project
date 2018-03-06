@@ -34,9 +34,11 @@ public class OutputHandler {
         for(int i = 0; i < outputSheets.length; i++) {
             Row row = outputSheets[i].createRow(0);
 
-            row.createCell(0).setCellValue("Bias");
+            row.createCell(0).setCellValue("Size");
             row.createCell(1).setCellValue("Complexity");
             row.createCell(2).setCellValue("Elapsed Time");
+            row.createCell(3).setCellValue("Used Memory");
+            row.createCell(4).setCellValue("Algorithm");
 
             rowCounters[i] = 1;
         }
@@ -51,9 +53,11 @@ public class OutputHandler {
     public void writeEntry(AlgorithmType type, OutputData data) {
         Row row = outputSheets[type.ordinal()].createRow(rowCounters[type.ordinal()]);
 
-        row.createCell(0).setCellValue(data.getBiasValue());
+        row.createCell(0).setCellValue(data.getSize());
         row.createCell(1).setCellValue(data.getComplexity());
         row.createCell(2).setCellValue(data.getElapsedTime());
+        row.createCell(3).setCellValue(data.getUsedMemory());
+        row.createCell(4).setCellValue(type.toString());
         rowCounters[type.ordinal()]++;
     }
 

@@ -11,11 +11,15 @@ public class OutputData {
     private int complexity;
     private long elapsedTime;
     private double biasValue;
+    private long usedMemory;
+    private int size;
 
-    public OutputData(int complexity, long elapsedTime, double biasValue) {
+    public OutputData(int complexity, long elapsedTime, double biasValue, long usedMemory, int size) {
         this.complexity = complexity;
         this.elapsedTime = elapsedTime;
         this.biasValue = biasValue;
+        this.usedMemory = usedMemory;
+        this.size = size;
     }
 
     @Override
@@ -33,6 +37,14 @@ public class OutputData {
 
     public long getElapsedTime() {
         return elapsedTime;
+    }
+
+    public long getUsedMemory() {
+        return usedMemory;
+    }
+
+    public int getSize() {
+        return size;
     }
 
 }

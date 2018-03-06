@@ -123,10 +123,10 @@ public class UnbiasedMazeTest {
         maze.addConnection(cells[6], cells[8]);
 
 
-        assertTrue(maze.getAStarShortestPathData(cells[0], cells[2], 0.50).getComplexity() == 0);
-        assertTrue(maze.getAStarShortestPathData(cells[0], cells[3], 0.50).getComplexity() == 4);
-        assertTrue(maze.getAStarShortestPathData(cells[0], cells[4], 0.50).getComplexity() == 0);
-        assertTrue(maze.getAStarShortestPathData(cells[0], cells[6], 0.50).getComplexity() == 3);
+        assertTrue(maze.getAStarShortestPathData(cells[0], cells[2]).getComplexity() == 0);
+        assertTrue(maze.getAStarShortestPathData(cells[0], cells[3]).getComplexity() == 4);
+        assertTrue(maze.getAStarShortestPathData(cells[0], cells[4]).getComplexity() == 0);
+        assertTrue(maze.getAStarShortestPathData(cells[0], cells[6]).getComplexity() == 3);
     }
 
 
