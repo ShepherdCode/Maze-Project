@@ -10,8 +10,8 @@ library(readxl)
 library(openxlsx)
 library(tidyverse)
 
-file_name <- "1520370089079"
-cellRange <- "A1:E5001"
+file_name <- "1520380074406"
+cellRange <- "A1:E12501"
 
 sheet_name <- paste("output-", file_name, sep="")
 file_name <- paste("output-", file_name, ".xls", sep="")
@@ -35,10 +35,10 @@ for(algorithm in algorithms) {
 inputData$Size <- as.factor(inputData$Size)
 df <- as.data.frame(inputData)
 
-plot <- ggplot(df, aes(x=Size, y=inputData$`Elapsed Time`, fill=Algorithm)) + geom_boxplot() 
+plot <- ggplot(df, aes(x=Size, y=inputData$`Used Memory`, fill=Algorithm)) + geom_boxplot() 
 
 # compute lower and upper whiskers
-ylim1 = boxplot.stats(df$`Elapsed Time`)$stats[c(1, 5)]
+ylim1 = boxplot.stats(df$`Used Memory`)$stats[c(1, 5)]
 
 # scale y limits based on ylim1
 plot = plot + coord_cartesian(ylim = ylim1*3)

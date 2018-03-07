@@ -17,17 +17,20 @@ public class GraphUtils {
     private GraphUtils() { }
 
     public static int calculateComplexity(Graph<Cell, DefaultEdge> graph, GraphPath<Cell, DefaultEdge> path) {
-        List<Cell> vertexList = path.getVertexList();
-        int complexity = 0;
-        for(Cell cell : vertexList) {
+        /**
+         * List<Cell> vertexList = path.getVertexList();
+         int complexity = 0;
+         for(Cell cell : vertexList) {
 
-            if(cell.equals(path.getStartVertex()) || cell.equals(path.getEndVertex())) {
-                continue;
-            }
+         if(cell.equals(path.getStartVertex()) || cell.equals(path.getEndVertex())) {
+         continue;
+         }
 
-            complexity += exploreCell(graph, path, cell, null);
-        }
-        return complexity;
+         complexity += exploreCell(graph, path, cell, null);
+         }
+         return complexity;
+         */
+        return 0;
     }
 
     private static int exploreCell(Graph<Cell, DefaultEdge> graph, GraphPath<Cell, DefaultEdge> path,  Cell cell, Cell previousCell) {

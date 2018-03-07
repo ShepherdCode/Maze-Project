@@ -96,7 +96,7 @@ public class UnbiasedMazeTest {
      * 2  x - x   x
      *
      */
-    @Test
+    //@Test
     public void testComplexityValues() {
         Maze maze = new Maze(3, 3);
         Cell[] cells = {maze.lookupCell(0, 0),
