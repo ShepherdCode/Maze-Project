@@ -16,9 +16,6 @@ The Mazes generated are tested to have the following properties:
 * Complete - Every point in the maze must be reachable by another
 * Reachable - Every point in the maze can be reached by all other points
 
-In addition to these properties, when a start/end point are chosen and the shortest path is found, a complexity is established.
-This complexity is defined as the length of all the paths that can be taken along the shortest path (the "wrong turns")
-
 This was implemented using JGraphT (http://jgrapht.org/) and a custom built maze generator
 
 Included with the project is an R Script that is designed to graph the output spreadsheet

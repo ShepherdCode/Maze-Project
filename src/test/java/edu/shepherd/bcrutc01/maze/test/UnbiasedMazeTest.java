@@ -1,16 +1,12 @@
 package edu.shepherd.bcrutc01.maze.test;
 
 import edu.shepherd.bcrutc01.maze.generators.MazeGenerator;
-import edu.shepherd.bcrutc01.maze.output.GraphUtils;
 import edu.shepherd.bcrutc01.maze.structure.Cell;
 import edu.shepherd.bcrutc01.maze.structure.Maze;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.traverse.DepthFirstIterator;
 import org.junit.Test;
-
-import java.util.HashSet;
-import java.util.Set;
 
 import static org.junit.Assert.assertTrue;
 
@@ -82,54 +78,4 @@ public class UnbiasedMazeTest {
 
         assertTrue(Math.abs((biasTotal / total) - .50) < 5);
     }
-
-    /**
-     * Test basic complexity structures using a preset maze.
-     *
-     * The preset maze is as follows:
-     *
-     *    0   1   2
-     * 0  x - x   x
-     *        |   |
-     * 1  x - x - x
-     *        |   |
-     * 2  x - x   x
-     *
-     */
-    //@Test
-    public void testComplexityValues() {
-        Maze maze = new Maze(3, 3);
-        Cell[] cells = {maze.lookupCell(0, 0),
-                maze.lookupCell(0, 1),
-                maze.lookupCell(1, 0),
-                maze.lookupCell(0, 2),
-                maze.lookupCell(1, 1),
-                maze.lookupCell(1,2),
-                maze.lookupCell(2, 1),
-                maze.lookupCell(2, 0),
-                maze.lookupCell(2, 2)};
-
-        for(Cell c : cells) {
-            maze.visitCell(c);
-        }
-
-        maze.addConnection(cells[0], cells[2]);
-        maze.addConnection(cells[2], cells[4]);
-        maze.addConnection(cells[4], cells[1]);
-        maze.addConnection(cells[4], cells[6]);
-        maze.addConnection(cells[4], cells[5]);
-        maze.addConnection(cells[5], cells[3]);
-        maze.addConnection(cells[6], cells[7]);
-        maze.addConnection(cells[6], cells[8]);
-
-
-        assertTrue(maze.getAStarShortestPathData(cells[0], cells[2]).getComplexity() == 0);
-        assertTrue(maze.getAStarShortestPathData(cells[0], cells[3]).getComplexity() == 4);
-        assertTrue(maze.getAStarShortestPathData(cells[0], cells[4]).getComplexity() == 0);
-        assertTrue(maze.getAStarShortestPathData(cells[0], cells[6]).getComplexity() == 3);
-    }
-
-
-
-
 }

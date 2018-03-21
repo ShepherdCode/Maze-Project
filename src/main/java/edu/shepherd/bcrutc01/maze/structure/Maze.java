@@ -1,6 +1,5 @@
 package edu.shepherd.bcrutc01.maze.structure;
 
-import edu.shepherd.bcrutc01.maze.output.GraphUtils;
 import edu.shepherd.bcrutc01.maze.output.OutputData;
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
@@ -8,9 +7,7 @@ import org.jgrapht.alg.interfaces.AStarAdmissibleHeuristic;
 import org.jgrapht.alg.shortestpath.AStarShortestPath;
 import org.jgrapht.alg.shortestpath.BellmanFordShortestPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
-import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.SimpleDirectedGraph;
 import org.jgrapht.graph.SimpleGraph;
 
 import java.util.Random;
@@ -26,7 +23,7 @@ import java.util.Random;
  */
 public class Maze {
 
-    private static AStarAdmissibleHeuristic<Cell> A_STAR_HEURISTIC = new AStarAdmissibleHeuristic<Cell>() {
+    private static AStarAdmissibleHeuristic<Cell> A_STAR_HEURISTIC_EUCLID = new AStarAdmissibleHeuristic<Cell>() {
         @Override
         public double getCostEstimate(Cell cell, Cell v1) {
             return Math.sqrt(getDistanceSquared(cell.getLengthPosition(), v1.getLengthPosition()) + getDistanceSquared(cell.getHeightPosition(), v1.getHeightPosition()));
@@ -36,6 +33,16 @@ public class Maze {
             return Math.pow(x1 - x2, 2);
         }
     };
+
+    private static AStarAdmissibleHeuristic<Cell> A_STAR_HEURISTIC_MANHATTAN = new AStarAdmissibleHeuristic<>() {
+        @Override
+        public double getCostEstimate(Cell cell, Cell v1) {
+            return Math.abs((cell.getLengthPosition() - v1.getLengthPosition())) + Math.abs((cell.getHeightPosition() - v1.getHeightPosition()));
+        }
+
+    };
+
+
 
     private Graph<Cell, DefaultEdge> graph;
     // Provides the ability to look up a Cell by position without having to search through every vertex in the graph
@@ -67,22 +74,39 @@ public class Maze {
     }
 
     /**
-     * Find the shortest path using A Star and report the timings it took
+     * Find the shortest path using A Star (+ Euclid heuristic) and report the timings it took
      *
      * @param start the start node
      * @param end the end node
      * @return the timings it took to find the shortest path
      */
-    public OutputData getAStarShortestPathData(Cell start, Cell end) {
-        AStarShortestPath<Cell, DefaultEdge> aStarShortestPath = new AStarShortestPath<>(graph, A_STAR_HEURISTIC);
+    public OutputData getAStarEuclidShortestPathData(Cell start, Cell end) {
+        AStarShortestPath<Cell, DefaultEdge> aStarShortestPath = new AStarShortestPath<>(graph, A_STAR_HEURISTIC_EUCLID);
         long currMem = Runtime.getRuntime().freeMemory();
         long curr = System.nanoTime();
         GraphPath<Cell, DefaultEdge> path = aStarShortestPath.getPath(start, end);
         long elapsed = System.nanoTime() - curr;
         long elapsedMem = currMem - Runtime.getRuntime().freeMemory();
-        int complexity = GraphUtils.calculateComplexity(graph, path);
 
-        return new OutputData(complexity, elapsed, path.getLength(), elapsedMem, getLength());
+        return new OutputData(elapsed, elapsedMem, getLength());
+    }
+
+    /**
+     * Find the shortest path using A Star (+ Manhattan heuristic) and report the timings it took
+     *
+     * @param start the start node
+     * @param end the end node
+     * @return the timings it took to find the shortest path
+     */
+    public OutputData getAStarManhattanShortestPathData(Cell start, Cell end) {
+        AStarShortestPath<Cell, DefaultEdge> aStarShortestPath = new AStarShortestPath<>(graph, A_STAR_HEURISTIC_MANHATTAN);
+        long currMem = Runtime.getRuntime().freeMemory();
+        long curr = System.nanoTime();
+        GraphPath<Cell, DefaultEdge> path = aStarShortestPath.getPath(start, end);
+        long elapsed = System.nanoTime() - curr;
+        long elapsedMem = currMem - Runtime.getRuntime().freeMemory();
+
+        return new OutputData(elapsed, elapsedMem, getLength());
     }
 
     /**
@@ -99,9 +123,8 @@ public class Maze {
         GraphPath<Cell, DefaultEdge> path = bellmanFordShortestPath.getPath(start, end);
         long elapsed = System.nanoTime() - curr;
         long elapsedMem = currMem - Runtime.getRuntime().freeMemory();
-        int complexity = GraphUtils.calculateComplexity(graph, path);
 
-        return new OutputData(complexity, elapsed, path.getLength(), elapsedMem, getLength());
+        return new OutputData(elapsed, elapsedMem, getLength());
     }
 
     /**
@@ -118,9 +141,8 @@ public class Maze {
         GraphPath<Cell, DefaultEdge> path = dijkstraShortestPath.getPath(start, end);
         long elapsed = System.nanoTime() - curr;
         long elapsedMem = currMem - Runtime.getRuntime().freeMemory();
-        int complexity = GraphUtils.calculateComplexity(graph, path);
 
-        return new OutputData(complexity, elapsed, path.getLength(), elapsedMem, getLength());
+        return new OutputData(elapsed, elapsedMem, getLength());
     }
 
     /**

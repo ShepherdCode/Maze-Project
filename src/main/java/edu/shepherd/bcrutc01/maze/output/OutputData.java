@@ -8,31 +8,19 @@ package edu.shepherd.bcrutc01.maze.output;
  */
 public class OutputData {
 
-    private int complexity;
     private long elapsedTime;
-    private double biasValue;
     private long usedMemory;
     private int size;
 
-    public OutputData(int complexity, long elapsedTime, double biasValue, long usedMemory, int size) {
-        this.complexity = complexity;
+    public OutputData(long elapsedTime, long usedMemory, int size) {
         this.elapsedTime = elapsedTime;
-        this.biasValue = biasValue;
         this.usedMemory = usedMemory;
         this.size = size;
     }
 
     @Override
     public String toString() {
-        return String.format("[Complexity: %s, ElapsedTime: %s, BiasValue %s]", complexity, elapsedTime, biasValue);
-    }
-
-    public double getBiasValue() {
-        return biasValue;
-    }
-
-    public int getComplexity() {
-        return complexity;
+        return String.format("");
     }
 
     public long getElapsedTime() {

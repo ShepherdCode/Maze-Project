@@ -24,21 +24,21 @@ public class OutputHandler {
     public OutputHandler() {
         outputSpreadsheet = new HSSFWorkbook();
         sheetName = "output-" + System.currentTimeMillis();
-        outputSheets = new Sheet[3];
-        rowCounters = new int[3];
+        outputSheets = new Sheet[4];
+        rowCounters = new int[4];
         outputSheets[0] = outputSpreadsheet.createSheet(sheetName + "-dijkstras");
-        outputSheets[1] = outputSpreadsheet.createSheet(sheetName + "-astar");
+        outputSheets[1] = outputSpreadsheet.createSheet(sheetName + "-astar-euclid");
         outputSheets[2] = outputSpreadsheet.createSheet(sheetName + "-bellmanford");
+        outputSheets[3] = outputSpreadsheet.createSheet(sheetName + "-astar-manhattan");
 
 
         for(int i = 0; i < outputSheets.length; i++) {
             Row row = outputSheets[i].createRow(0);
 
             row.createCell(0).setCellValue("Size");
-            row.createCell(1).setCellValue("Complexity");
-            row.createCell(2).setCellValue("Elapsed Time");
-            row.createCell(3).setCellValue("Used Memory");
-            row.createCell(4).setCellValue("Algorithm");
+            row.createCell(1).setCellValue("Elapsed Time");
+            row.createCell(2).setCellValue("Used Memory");
+            row.createCell(3).setCellValue("Algorithm");
 
             rowCounters[i] = 1;
         }
@@ -54,10 +54,9 @@ public class OutputHandler {
         Row row = outputSheets[type.ordinal()].createRow(rowCounters[type.ordinal()]);
 
         row.createCell(0).setCellValue(data.getSize());
-        row.createCell(1).setCellValue(data.getComplexity());
-        row.createCell(2).setCellValue(data.getElapsedTime());
-        row.createCell(3).setCellValue(data.getUsedMemory());
-        row.createCell(4).setCellValue(type.toString());
+        row.createCell(1).setCellValue(data.getElapsedTime());
+        row.createCell(2).setCellValue(data.getUsedMemory());
+        row.createCell(3).setCellValue(type.toString());
         rowCounters[type.ordinal()]++;
     }
 

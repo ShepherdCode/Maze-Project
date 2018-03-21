@@ -13,22 +13,16 @@ public enum AlgorithmType {
          */
         DIJKSTRAS(),
         /**
-         * A-star
+         * A-star (plus Euclidean distance heuristic)
          */
-        ASTAR(),
+        ASTAR_EUCLID(),
         /**
          * Bellman-Ford
          */
-        BELLMAN_FORD();
-
-        public static AlgorithmType of(int value) {
-            switch(value) {
-                case 0: return DIJKSTRAS;
-                case 1: return ASTAR;
-                case 2: return BELLMAN_FORD;
-            }
-
-            throw new IllegalArgumentException("Invalid value: " + value);
-        }
+        BELLMAN_FORD(),
+        /**
+        * A-star (+ Manhattan distance heuristic)
+        */
+        ASTAR_MANHATTAN()
 
 }

@@ -50,12 +50,14 @@ public class Main {
                     Cell end = getRandomCell(maze);
 
                     OutputData data1 = maze.getDijstraShortestPathData(start, end);
-                    OutputData data2 = maze.getAStarShortestPathData(start, end);
+                    OutputData data2 = maze.getAStarEuclidShortestPathData(start, end);
                     OutputData data3 = maze.getBellmanFordShortestPathData(start, end);
+                    OutputData data4 = maze.getAStarManhattanShortestPathData(start, end);
 
                     handler.writeEntry(AlgorithmType.DIJKSTRAS, data1);
-                    handler.writeEntry(AlgorithmType.ASTAR, data2);
+                    handler.writeEntry(AlgorithmType.ASTAR_EUCLID, data2);
                     handler.writeEntry(AlgorithmType.BELLMAN_FORD, data3);
+                    handler.writeEntry(AlgorithmType.ASTAR_MANHATTAN, data4);
                 }
 
             }
